@@ -1,0 +1,2 @@
+ancho: 19,1 cm
+alto: 10,7 cm
