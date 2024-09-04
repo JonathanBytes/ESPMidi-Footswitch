@@ -11,14 +11,12 @@
 #include "midi/midiSetup.h"
 #include "animations/ESPAnimations.h"
 
-// TaskHandle_t WebServerTask;
-// TaskHandle_t DisplayTask;
 TaskHandle_t DisplayTask0;
+TaskHandle_t WebServerTask0;
 
 void setup() {
-  // xTaskCreatePinnedToCore(serverloop, "WebServerTask_0", 1000, NULL, 1, &WebServerTask, 0);
-  // xTaskCreatePinnedToCore(displayloop, "DisplayTask_1", 1000, NULL, 1, &DisplayTask, 0);
-  xTaskCreatePinnedToCore(loop0, "DisplayTask_0", 32768, NULL, 1, &DisplayTask0, 0);
+  xTaskCreatePinnedToCore(displayloop, "DisplayTask_0", 32768, NULL, 1, &DisplayTask0, 0);
+  xTaskCreatePinnedToCore(serverloop, "WebServerTask0", 4096, NULL, 1, &WebServerTask0, 0);
   Serial.begin(115200);
 
   // AP Mode
@@ -26,12 +24,6 @@ void setup() {
   WiFi.softAPConfig(local_ip, gateway, subnet);
   delay(100);
   
-  // // Conectar a Wi-Fi
-  // WiFi.begin(ssid, password);
-  // while (WiFi.status() != WL_CONNECTED) {
-  //   delay(1000);
-  //   Serial.println("Conectando a WiFi...");
-  // }
   Serial.print("Conectado a WiFi, IP: ");
   Serial.println(WiFi.localIP());
 
@@ -80,7 +72,6 @@ void setup() {
 
   // Setup animations
   setupAnimations();
-  bootAnimation();
   display.clearDisplay();
   drawText("Jonathan");
 
@@ -155,32 +146,24 @@ void loop() {
   handlePot(analog4, 94);
 
   midi.update(); // Manejar o descartar la entrada MIDI
-  server.handleClient(); // Manejar peticiones del servidor web
 }
 
-void loop0(void *parameter) {
+void displayloop(void *parameter) {
+  bootAnimation();
   while (true) {
-    delay(1000);
+    delay(2000);
     bootAnimation();
     drawText("Jonathan");
   }
   vTaskDelay(10);
 }
 
-// void serverloop(void *parameter) {
-//   while (true) {
-//     server.handleClient(); // Manejar peticiones del servidor web
-//   }
-// }
-
-// void displayloop(void *parameter) {
-//   while (true) {
-//     display.fillScreen(WHITE);
-//     display.display();
-//     delay(1000);
-//     drawText("Jonathan");
-//   }
-// }
+void serverloop(void *parameter) {
+  while (true) {
+    server.handleClient();
+  }
+  vTaskDelay(10);
+}
 
 // Función para configurar un MultiPurposeButton
 void configureButton(MultiPurposeButton &button) {
