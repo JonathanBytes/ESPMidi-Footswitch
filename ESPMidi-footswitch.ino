@@ -73,8 +73,6 @@ void setup() {
   // Setup animations
   setupAnimations();
   display.clearDisplay();
-  drawText("Jonathan");
-
 }
 
 using ValueArray = uint8_t[2];

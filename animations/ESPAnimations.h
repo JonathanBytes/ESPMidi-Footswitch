@@ -48,7 +48,7 @@ void drawText(const std::string &text) {
   display.clearDisplay();
   display.setTextSize(2);      // Set text size to 1
   display.setTextColor(WHITE); // Set text color to white
-  display.setCursor(14, 14);   // Set cursor to top-left corner
+  display.setCursor(14, 13);   // Set cursor to top-left corner
   display.print(text.c_str()); // Draw text
   display.display();           // Update display
 }
