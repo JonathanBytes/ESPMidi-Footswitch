@@ -2,30 +2,29 @@
 #include <AH/Hardware/Button.hpp>
 #include <AH/Hardware/MultiPurposeButton.hpp>
 #include <AH/Hardware/FilteredAnalog.hpp>
-#include <Control_Surface.h>
 
 #include <WiFi.h>
 #include <WebServer.h>
 
 #include "webServer/webServerSetup.h"
 #include "midi/midiSetup.h"
-#include "animations/ESPAnimations.h"
 
 TaskHandle_t DisplayTask0;
 TaskHandle_t WebServerTask0;
 
 void setup() {
-  xTaskCreatePinnedToCore(displayloop, "DisplayTask_0", 32768, NULL, 1, &DisplayTask0, 0);
+  xTaskCreatePinnedToCore(displayloop, "DisplayTask_0", 4096, NULL, 1, &DisplayTask0, 0);
   xTaskCreatePinnedToCore(serverloop, "WebServerTask0", 4096, NULL, 1, &WebServerTask0, 0);
   Serial.begin(115200);
+  Serial.println(ESP.getFlashChipSize());
 
   // AP Mode
   WiFi.softAP(ssid, password);
   WiFi.softAPConfig(local_ip, gateway, subnet);
   delay(100);
   
-  Serial.print("Conectado a WiFi, IP: ");
-  Serial.println(WiFi.localIP());
+  // Serial.print("Conectado a WiFi, IP: ");
+  // Serial.println(WiFi.localIP());
 
   // Configurar rutas del servidor
   server.on("/", handleRoot);
@@ -33,7 +32,7 @@ void setup() {
   server.on("/editBank", handleEditBank);  // Nueva ruta para editar banco
   server.on("/saveBank", handleSaveBank);  // Nueva ruta para guardar banco
   server.begin(); // Iniciar servidor web
-  Serial.println("Servidor iniciado");
+  // Serial.println("Servidor iniciado");
 
   pinMode(ledPin, OUTPUT);
   pushbutton.begin();  // Inicia el botón pushbutton
@@ -62,17 +61,6 @@ void setup() {
   midi.begin(); // Inicializar la interfaz MIDI
 
   updateBankIndicators(); // Update leds at startup
-  
-  // Initialize the OLED display
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-      Serial.println(F("SSD1306 allocation failed"));
-      for(;;);
-  }
-  display.clearDisplay();
-
-  // Setup animations
-  setupAnimations();
-  display.clearDisplay();
 }
 
 using ValueArray = uint8_t[2];
@@ -147,11 +135,8 @@ void loop() {
 }
 
 void displayloop(void *parameter) {
-  bootAnimation();
   while (true) {
-    delay(2000);
-    bootAnimation();
-    drawText("Jonathan");
+    delay(300);
   }
   vTaskDelay(10);
 }

@@ -1,3 +1,6 @@
+
+#include <Control_Surface.h>
+
 // Instanciar la interfaz MIDI sobre USB
 HairlessMIDI_Interface midi;
 
@@ -5,7 +8,6 @@ int analog1Pin = 33;
 int analog2Pin = 35; // 32 used by wifi
 int analog3Pin = 34;
 int analog4Pin = 39; // Labeled as VN on board
-#define filteringAmount = 4
 
 // Create a filtered analog object:
 FilteredAnalog<7,        // Output precision in bits
